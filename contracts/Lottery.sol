@@ -10,6 +10,7 @@ pragma solidity ^0.8.18;
 //chainlink oracle for randomness, automated execution (Chainlink Keepers)
 
 error Lottery__NotEnoughETHEntered();
+error Lottery__TransferFailed();
 import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 
@@ -31,6 +32,7 @@ contract Lottery is VRFConsumerBaseV2 {
      */
     event LotteryEnter(address indexed player);
     event RequestedLotteryWinner(uint256 indexed requestId);
+    event WinnerPicked(address indexed winner);
 
     /**
      * Lottery Variables
@@ -91,6 +93,12 @@ contract Lottery is VRFConsumerBaseV2 {
         uint256 indexOfWinner = randomWords[0] % s_players.length;
         address payable recentWinner = s_players[indexOfWinner];
         s_recentWinner = recentWinner;
+
+        (bool success, ) = recentWinner.call{value: address(this).balance}("");
+        if (!success) {
+            revert Lottery__TransferFailed();
+        }
+        emit WinnerPicked(recentWinner);
     }
 
     function getRecentWinner() public view returns (address) {
