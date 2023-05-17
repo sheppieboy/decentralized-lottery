@@ -32,6 +32,11 @@ contract Lottery is VRFConsumerBaseV2 {
     event LotteryEnter(address indexed player);
     event RequestedLotteryWinner(uint256 indexed requestId);
 
+    /**
+     * Lottery Variables
+     */
+    address private s_recentWinner;
+
     constructor(
         address vrfCoordinatorV2,
         uint256 entranceFee,
@@ -85,5 +90,10 @@ contract Lottery is VRFConsumerBaseV2 {
     ) internal override {
         uint256 indexOfWinner = randomWords[0] % s_players.length;
         address payable recentWinner = s_players[indexOfWinner];
+        s_recentWinner = recentWinner;
+    }
+
+    function getRecentWinner() public view returns (address) {
+        return s_recentWinner;
     }
 }
