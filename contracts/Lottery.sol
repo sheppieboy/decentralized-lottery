@@ -10,8 +10,9 @@ pragma solidity ^0.8.18;
 //chainlink oracle for randomness, automated execution (Chainlink Keepers)
 
 error Lottery__NotEnoughETHEntered();
+import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
 
-contract Lottery {
+contract Lottery is VRFConsumerBaseV2 {
     /**
      * State Variables
      */
@@ -23,7 +24,10 @@ contract Lottery {
      */
     event LotteryEnter(address indexed player);
 
-    constructor(uint256 entranceFee) {
+    constructor(
+        address vrfCoordinatorV2,
+        uint256 entranceFee
+    ) VRFConsumerBaseV2(vrfCoordinatorV2) {
         i_entranceFee = entranceFee;
     }
 
@@ -46,5 +50,14 @@ contract Lottery {
         emit LotteryEnter(msg.sender);
     }
 
-    //function pickWinner(){}
+    function requestWinner() external {
+        //Request the random number
+        //Once we get it,. do something with it
+        //2 transaction process
+    }
+
+    function fulfillRandomWords(
+        uint256 requestId,
+        uint256[] memory randomWords
+    ) internal override {}
 }
