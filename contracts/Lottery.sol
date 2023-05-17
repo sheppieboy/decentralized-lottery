@@ -87,7 +87,7 @@ contract Lottery is VRFConsumerBaseV2 {
     }
 
     function fulfillRandomWords(
-        uint256 requestId,
+        uint256 /*requestId*/,
         uint256[] memory randomWords
     ) internal override {
         uint256 indexOfWinner = randomWords[0] % s_players.length;
