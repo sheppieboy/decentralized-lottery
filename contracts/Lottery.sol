@@ -15,17 +15,21 @@ contract Lottery {
     /**
      * State Variables
      */
-    uint256 private immutable i_entraceFee;
-
+    uint256 private immutable i_entranceFee;
     address payable[] private s_players;
 
+    /**
+     * Events
+     */
+    event LotteryEnter(address indexed player);
+
     constructor(uint256 entranceFee) {
-        i_entraceFee = entranceFee;
+        i_entranceFee = entranceFee;
     }
 
     //get entrance fee
     function getEntranceFee() public view returns (uint256) {
-        return i_entraceFee;
+        return i_entranceFee;
     }
 
     //get player
@@ -33,11 +37,14 @@ contract Lottery {
         return s_players[index];
     }
 
-    // function enterLottery() public payable {
-    //     if (msg.value < i_entraceFee) {
-    //         revert Lottery__NotEnoughETHEntered();
-    //     }
-    // }
+    function enterLottery() public payable {
+        if (msg.value < i_entranceFee) {
+            revert Lottery__NotEnoughETHEntered();
+        }
+
+        s_players.push(payable(msg.sender));
+        emit LotteryEnter(msg.sender);
+    }
 
     //function pickWinner(){}
 }
