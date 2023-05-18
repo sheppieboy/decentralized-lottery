@@ -4,6 +4,8 @@ const {
   networkConfig,
 } = require('../helper-hardhat-config');
 
+const { verify } = require('../utils/verify');
+
 const VRF_SUB_FUND_AMOUNT = ethers.utils.parseEther('30');
 
 module.exports = async ({ getNamedAccounts, deployments }) => {
@@ -41,4 +43,13 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     args: [entranceFee, gasLane, subscriptionId, callbackGasLimit, interval],
     log: true,
   });
+
+  if (
+    !developmentChains.includes(network.name) &&
+    process.env.ETHERSCAN_API_KEY
+  ) {
+    log('verifying contract.....');
+    await verify(lottery.address, args);
+  }
+  log('===================================');
 };
